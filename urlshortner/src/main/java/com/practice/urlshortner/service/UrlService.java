@@ -65,6 +65,6 @@ public class UrlService {
     }
 
     private String buildShortUrl(String code){
-        return "http://localhost:8080/api"+code;
+        return "http://localhost:8080/api/"+code;
     }
 }
