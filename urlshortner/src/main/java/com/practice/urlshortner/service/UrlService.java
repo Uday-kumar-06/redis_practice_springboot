@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -21,7 +22,7 @@ public class UrlService {
     private final StringRedisTemplate stringRedisTemplate;
     public UrlMappingResponse urlShorten(UrlMappingRequest urlMappingRequest){
 
-        if(urlRepository.existsOriginalUrl(urlMappingRequest.originalUrl())){
+        if(urlRepository.existsByOriginalUrl(urlMappingRequest.originalUrl())){
             throw new RuntimeException("Url Already Exist");
         }
 
@@ -44,7 +45,26 @@ public class UrlService {
         );
     }
 
+    public String getOriginalUrl(String code){
+
+        String key = CACHE_PREFIX + code;
+
+        String cachedUrl = stringRedisTemplate.opsForValue().get(key);
+        if(cachedUrl != null){
+            return cachedUrl;
+        }
+
+        UrlEntity entity = urlRepository.findByShortCode(code)
+                .orElseThrow(() -> new RuntimeException("Short URL not found"));
+
+
+        stringRedisTemplate.opsForValue()
+                .set(key, entity.getOriginalUrl(), Duration.ofMinutes(20));
+
+        return entity.getOriginalUrl();
+    }
+
     private String buildShortUrl(String code){
-        return "https://shotly/"+code;
+        return "http://localhost:8080/api"+code;
     }
 }

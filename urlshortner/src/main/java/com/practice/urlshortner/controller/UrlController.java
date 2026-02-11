@@ -23,6 +23,10 @@ public class UrlController {
     }
 
 
-
+    @GetMapping("/{shortcode}")
+    public ResponseEntity<?> redirect(@PathVariable String shortcode){
+        String url = urlService.getOriginalUrl(shortcode);
+        return ResponseEntity.status(HttpStatus.OK).body(url);
+    }
 
 }

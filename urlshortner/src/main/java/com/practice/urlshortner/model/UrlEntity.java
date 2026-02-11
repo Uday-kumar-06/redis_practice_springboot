@@ -15,9 +15,9 @@ public class UrlEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    @Column(unique = true, nullable = false)
+    @Column(name = "originalUrl", unique = true, nullable = false)
     private String originalUrl;
-    @Column(unique = true, nullable = false)
+    @Column(name = "shortCode", unique = true, nullable = false)
     private String shortCode;
     @Column(nullable = false)
     private LocalDateTime createdAt;
